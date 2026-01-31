@@ -62,5 +62,40 @@ public class RadialRigidbody : MonoBehaviour
         Debug.DrawRay(transform.position, realForce, Color.yellow / 2f);
     }
 
+    public void ConstrainRope(Vector2 anchorRadialPos, float ropeLength)
+    {
+        // Read current state from the real rigidbody (not cached fields)
+        var mgr = RadialRigidibodyManager.instance;
+
+        Vector2 p = mgr.GetInverseRadialPosition(body.position);
+        Vector2 v = mgr.GetInverseRadialVector(body.position, body.velocity);
+
+        Vector2 delta = anchorRadialPos - p;
+        float dist = delta.magnitude;
+
+        // Slack: rope does nothing (doesn't push)
+        if (dist <= ropeLength || dist < 1e-6f)
+            return;
+
+        Vector2 dir = delta / dist; // from body -> anchor
+
+        // --- 1) Position projection: snap back to exactly ropeLength ---
+        float error = dist - ropeLength;
+        p += dir * error;
+
+        // --- 2) Velocity projection: remove only "moving away" component ---
+        // (dir points toward the anchor, so vAlong < 0 means moving away)
+        float vAlong = Vector2.Dot(v, dir);
+        if (vAlong < 0f)
+            v -= dir * vAlong;
+
+        // Write back to rigidbody using the same conversions your system expects
+        body.MovePosition(mgr.GetRadialPosition(p));
+        body.velocity = mgr.GetRadialVector(p, v);
+
+        // Keep cached fields consistent (optional but nice)
+        position = p;
+        velocity = v;
+    }
 
 }

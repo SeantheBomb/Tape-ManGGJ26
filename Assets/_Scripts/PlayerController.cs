@@ -19,8 +19,6 @@ public class PlayerController : MonoBehaviour
     public KeyCode moveLeft = KeyCode.A;
     public KeyCode moveRight = KeyCode.D;
     public KeyCode jump = KeyCode.Space;
-    public KeyCode leftGrapple = KeyCode.Mouse0;
-    public KeyCode rightGrapple = KeyCode.Mouse1;
 
     RadialRigidbody radialBody;
     float jumpTimer;
