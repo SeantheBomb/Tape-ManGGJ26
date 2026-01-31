@@ -1,58 +1,65 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class RadialRigidbody : MonoBehaviour
 {
 
     public Vector2 gravity;
-    public Vector2 acceleration;
     public Vector2 velocity;
     public Vector2 position;
-    public float drag;
-    public Vector2 lastPosition;
-    public Vector2 lastVelocity;
+    public float radius = 0.5f;
+    public float height = 1f;
+    public bool isGrounded;
+    public LayerMask collisionLayer;
+    public LayerMask groundLayer;
+
+    Rigidbody body;
+
+
+    private void Start()
+    {
+        body = GetComponent<Rigidbody>();
+    }
 
     private void FixedUpdate()
     {
-        lastPosition = position;
-        lastVelocity = velocity;
-        acceleration += gravity;
-        velocity += acceleration * Time.fixedDeltaTime;
-        position += velocity * Time.fixedDeltaTime;
-        transform.position = RadialRigidibodyManager.instance.GetRadialPosition(position);
-        position = RadialRigidibodyManager.instance.GetInverseRadialPosition(transform.position);
+
+        body.AddForce(gravity);
+        position = RadialRigidibodyManager.instance.GetInverseRadialPosition(body.position);
+        body.MovePosition(RadialRigidibodyManager.instance.GetRadialPosition(position));
+        velocity = RadialRigidibodyManager.instance.GetInverseRadialVector(body.position, body.velocity);
+        body.velocity = RadialRigidibodyManager.instance.GetRadialVector(position, velocity);
+        
+        isGrounded = Spherecast(new Ray(body.position + (Vector3.up * height / 2), Vector3.down), radius, height, groundLayer);
+    }
+
+    bool Spherecast(Ray ray, float radius, out RaycastHit result, float range, LayerMask layers)
+    {
+        ray.origin -= ray.direction * radius;
+        return Physics.SphereCast(ray, radius, out result, range, layers);
+    }
+
+    bool Spherecast(Ray ray, float radius, float range, LayerMask layers)
+    {
+        ray.origin -= ray.direction * radius;
+        return Physics.SphereCast(ray, radius, range, layers);
     }
 
     public void AddForce(Vector2 force)
     {
-        acceleration += force;
+        Vector3 realForce = RadialRigidibodyManager.instance.GetRadialVector(position, force);
+        body.AddForce(realForce, ForceMode.Force);
+        Debug.DrawRay(transform.position, realForce, Color.yellow);
     }
 
     public void AddImpulse(Vector2 force)
     {
-        if(force.x != 0)
-        {
-            if(Mathf.Sign(force.x) == Mathf.Sign(velocity.x))
-            {
-                velocity.x += force.x;
-            }
-            else
-            {
-                velocity.x = force.x;
-            }
-        }
-        if (force.y != 0)
-        {
-            if (Mathf.Sign(force.y) == Mathf.Sign(velocity.y))
-            {
-                velocity.y += force.y;
-            }
-            else
-            {
-                velocity.y = force.y;
-            }
-        }
+        Vector3 realForce = RadialRigidibodyManager.instance.GetRadialVector(position, force);
+        body.AddForce(realForce, ForceMode.Impulse);
+        Debug.DrawRay(transform.position, realForce, Color.yellow / 2f);
     }
 
 
