@@ -33,6 +33,16 @@ public class RadialRigidibodyManager : MonoBehaviour
         return result;
     }
 
+    public Vector3 GetRadialPosition(Vector2 pos, float radius)
+    {
+        Vector3 result = Vector3.zero;
+        result.y = Mathf.Clamp(pos.y, minY, maxY);
+        result.x = Mathf.Cos(pos.x * Mathf.Deg2Rad) * radius;
+        result.z = Mathf.Sin(pos.x * Mathf.Deg2Rad) * radius;
+        debugResult = result;
+        return result;
+    }
+
     public Vector2 GetInverseRadialPosition(Vector3 pos)
     {
         Vector2 result = Vector2.zero;

@@ -10,12 +10,14 @@ public class RadialRigidbody : MonoBehaviour
     public Vector2 velocity;
     public Vector2 position;
     public float drag;
-    public Vector2 lastPosition;
-    public Vector2 lastVelocity;
-    public float deltaPosX;
-    public float deltaPosY;
-    public float deltaVelX;
-    public float deltaVelY;
+    public float radius = 0.5f;
+    public float height = 1f;
+    Vector2 lastPosition;
+    Vector2 lastVelocity;
+    float deltaPosX;
+    float deltaPosY;
+    float deltaVelX;
+    float deltaVelY;
 
 
     private void FixedUpdate()
@@ -24,6 +26,7 @@ public class RadialRigidbody : MonoBehaviour
         lastVelocity = velocity;
         acceleration += gravity;
         velocity += acceleration;
+        velocity = ConstrainVelocityCollision(position, velocity);
         position += velocity * Time.fixedDeltaTime;
         transform.position = RadialRigidibodyManager.instance.GetRadialPosition(position);
         position = RadialRigidibodyManager.instance.GetInverseRadialPosition(transform.position);
@@ -35,6 +38,29 @@ public class RadialRigidbody : MonoBehaviour
         deltaVelY = Mathf.Abs(velocity.y - lastVelocity.y);
         acceleration.x = Mathf.Clamp(acceleration.x, -deltaVelX, deltaVelX);
         acceleration.y = Mathf.Clamp(acceleration.y, -deltaVelY, deltaVelY);
+    }
+
+    public Vector2 ConstrainVelocityCollision(Vector2 position, Vector2 velocity)
+    {
+        Vector3 realPos = RadialRigidibodyManager.instance.GetRadialPosition(position);
+        Vector3 realDest = RadialRigidibodyManager.instance.GetRadialPosition(position + (velocity * Time.fixedDeltaTime));
+        Vector3 realVel = realDest - realPos;
+        Vector2 result = velocity;
+        Ray xRay = new Ray(realPos, Vector3.ProjectOnPlane(realVel, Vector3.up));
+        if(Physics.Raycast(xRay, out RaycastHit xHit, realVel.magnitude + radius))
+        {
+            Vector2 point = RadialRigidibodyManager.instance.GetInverseRadialPosition(xHit.point);
+            Vector2 newVel = point - position;
+            result.x = newVel.x;
+        }
+        Ray yRay = new Ray(realPos, Vector3.Project(realVel, Vector3.up));
+        if (Physics.Raycast(yRay, out RaycastHit yHit, realVel.magnitude + (yRay.direction.y > 0 ? height : 0)))
+        {
+            Vector2 point = RadialRigidibodyManager.instance.GetInverseRadialPosition(xHit.point);
+            Vector2 newVel = point - position;
+            result.y = newVel.y;
+        }
+        return result;
     }
 
     public void AddForce(Vector2 force)

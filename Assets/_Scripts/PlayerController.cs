@@ -8,8 +8,12 @@ public class PlayerController : MonoBehaviour
 
     public Vector2 movement;
 
-    public float moveSpeed = 1f;
-    public float jumpStrength = 1f;
+    public float moveForce = 10f;
+    public float initialJumpForce = 100f;
+    public float sustainJumpForce = 25f;
+    public float sustainJumpDuration = 2f;
+    public bool isJumping = false;
+    public bool isGrounded = false;
 
     public KeyCode moveLeft = KeyCode.A;
     public KeyCode moveRight = KeyCode.D;
@@ -28,13 +32,14 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        movement.x += Input.GetKey(moveRight) ? moveSpeed : 0;
-        movement.x -= Input.GetKey(moveLeft) ? moveSpeed : 0;
-        movement.y += Input.GetKeyDown(jump) ? jumpStrength : 0;
+        movement.x += Input.GetKey(moveRight) ? moveForce : 0;
+        movement.x -= Input.GetKey(moveLeft) ? moveForce : 0;
+        movement.y += Input.GetKeyDown(jump) ? initialJumpForce : 0;
     }
 
     private void FixedUpdate()
     {
+
         radialBody.AddImpulse(movement);
         movement = Vector2.zero;
     }
