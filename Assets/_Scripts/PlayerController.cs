@@ -28,7 +28,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        movement = Vector2.zero;
         movement.x += Input.GetKey(moveRight) ? moveSpeed : 0;
         movement.x -= Input.GetKey(moveLeft) ? moveSpeed : 0;
         movement.y += Input.GetKeyDown(jump) ? jumpStrength : 0;
@@ -37,5 +36,6 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         radialBody.AddImpulse(movement);
+        movement = Vector2.zero;
     }
 }
