@@ -33,6 +33,14 @@ public class RadialRigidibodyManager : MonoBehaviour
         return result;
     }
 
+    public Vector2 GetInverseRadialPosition(Vector3 pos)
+    {
+        Vector2 result = Vector2.zero;
+        result.y = pos.y;
+        result.x = Mathf.Atan2(pos.z, pos.x) * Mathf.Rad2Deg;
+        return result;
+    }
+
 
     private void OnDrawGizmosSelected()
     {
