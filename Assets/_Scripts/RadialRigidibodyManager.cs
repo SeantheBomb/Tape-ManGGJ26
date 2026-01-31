@@ -33,6 +33,35 @@ public class RadialRigidibodyManager : MonoBehaviour
         return result;
     }
 
+    public Vector3 GetRadialVector(Vector2 pos, Vector2 vector)
+    {
+        Vector3 realPos = GetRadialPosition(pos);
+        Vector3 normal = Vector3.ProjectOnPlane(realPos - transform.position, Vector3.up).normalized;
+        Vector3 realDir = Vector3.Cross(normal, Vector3.up) * vector.x;
+        realDir.y = vector.y;
+        return realDir;
+    }
+
+    public Vector2 GetInverseRadialVector(Vector3 realPos, Vector3 realDir)
+    {
+        // Radial direction (from center to point) in XZ plane
+        Vector3 radial = Vector3.ProjectOnPlane(realPos - transform.position, Vector3.up);
+
+        // Degenerate safety (if you're exactly at the center for some reason)
+        if (radial.sqrMagnitude < 1e-8f)
+            return new Vector2(0f, realDir.y);
+
+        radial.Normalize();
+
+        // Tangent direction (the direction you used for vector.x)
+        Vector3 tangent = Vector3.Cross(radial, Vector3.up).normalized;
+
+        Vector2 vector;
+        vector.x = Vector3.Dot(Vector3.ProjectOnPlane(realDir, Vector3.up), tangent);
+        vector.y = realDir.y;
+        return vector;
+    }
+
     public Vector3 GetRadialPosition(Vector2 pos, float radius)
     {
         Vector3 result = Vector3.zero;

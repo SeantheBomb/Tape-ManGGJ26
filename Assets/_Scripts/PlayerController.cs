@@ -9,11 +9,12 @@ public class PlayerController : MonoBehaviour
 
     public Vector2 movement;
 
-    public float moveForce = 10f;
-    public float initialJumpForce = 100f;
-    public float sustainJumpForce = 25f;
-    public float sustainJumpDuration = 2f;
+    public float moveForce = 1f;
+    public float maxSpeed = 10f;
+    public float jumpHeight = 1f;
+    public float maxJumpDuration = 1f;
     public bool isJumping = false;
+    bool isJumpFirstFrame = false;
 
     public KeyCode moveLeft = KeyCode.A;
     public KeyCode moveRight = KeyCode.D;
@@ -24,6 +25,8 @@ public class PlayerController : MonoBehaviour
     RadialRigidbody radialBody;
     float jumpTimer;
 
+    float jumpImpulse => Mathf.Sqrt(2f * radialBody.gravity.magnitude * jumpHeight);
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,37 +36,42 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        movement.x += Input.GetKey(moveRight) ? moveForce : 0;
-        movement.x -= Input.GetKey(moveLeft) ? moveForce : 0;
-        if (Input.GetKey(jump))
+        
+        movement.x += Input.GetKey(moveRight) ? 1 : 0;
+        movement.x -= Input.GetKey(moveLeft) ? 1 : 0;
+
+        if (Input.GetKey(jump) && isJumping == false)
+            isJumpFirstFrame = true;
+        isJumping = Input.GetKey(jump);
+        if (jumpTimer > maxJumpDuration)
+            isJumping = false;
+        if(isJumping && isJumpFirstFrame)
         {
-            if (isJumping == false)
-            {
-                if (radialBody.isGrounded == true)
-                {
-                    movement.y += initialJumpForce;
-                    isJumping = true;
-                }
-            }
-            else
-            {
-                if (jumpTimer < sustainJumpDuration)
-                {
-                    movement.y += sustainJumpForce;
-                    jumpTimer += Time.deltaTime;
-                }
-                else
-                    isJumping = false;
-            }
+            movement.y = jumpImpulse;
+            //Debug.Log($"Player: Jump impulse {jumpImpulse} set movement {movement.y}");
         }
-        else
-            jumpTimer = 0f;
-        movement.y += Input.GetKeyDown(jump) ? initialJumpForce : 0;
+        if (isJumping)
+        {
+            jumpTimer += Time.deltaTime;
+        }
+        if(radialBody.isGrounded == false && isJumping == false && Input.GetKey(jump) == false)
+            movement.y = -jumpImpulse / 2f;
+
+        if (radialBody.isGrounded && Input.GetKey(jump) == false)
+            jumpTimer = 0;
+        isJumpFirstFrame = false;
+
+
+        if (movement.x != 0)
+        {
+            float targetSpeed = Mathf.Sign(movement.x) * maxSpeed;
+            float acceleration = Mathf.Clamp(targetSpeed - radialBody.velocity.x, -moveForce, moveForce);
+            movement.x = acceleration;
+        }
     }
 
     private void FixedUpdate()
     {
-
         radialBody.AddImpulse(movement);
         movement = Vector2.zero;
     }
