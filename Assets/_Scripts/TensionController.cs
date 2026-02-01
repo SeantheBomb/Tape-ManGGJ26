@@ -20,14 +20,16 @@ public class TensionTracker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (tense >= 2 && change < 1)
+        if (tense == 1 && change < 1)
         {
+            myAudioSource.Stop();
             myAudioSource2.Play();
             change = change++;
         }
 
-        if(tense >= 4 && change < 2)
+        if(tense == 3 && change < 2)
         {
+            myAudioSource2.Stop();
             myAudioSource3.Play();
             change = change++;
         }
