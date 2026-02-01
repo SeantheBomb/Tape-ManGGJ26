@@ -7,12 +7,17 @@ public class NPC : MonoBehaviour
 {
     public TMP_Text happyText;
     public TMP_Text madText;
+    public AudioSource happySound;
+    public AudioSource madSound;
+    public AudioSource chatter;
     public TensionTracker tension;
+    public Sprite happylook;
+    public Sprite madlook;
 
     // Start is called before the first frame update
     void Start()
     {
-        gameObject.GetComponentInChildren<Renderer>().material.color = Color.grey;
+        GetComponent<SpriteRenderer>().sprite = madlook; 
         happyText.gameObject.SetActive(false);
         madText.gameObject.SetActive(false);
     }
@@ -27,9 +32,11 @@ public class NPC : MonoBehaviour
     {
         if (this.gameObject.activeSelf)
         {
-            gameObject.GetComponentInChildren<Renderer>().material.color = Color.green;
+            GetComponent<SpriteRenderer>().sprite = happylook;
             madText.gameObject.SetActive(false);
             happyText.gameObject.SetActive(true);
+            happySound.Play();
+            chatter.Play();
             yield return new WaitForSeconds(5);
             happyText.gameObject.SetActive(false);
             this.gameObject.SetActive(false);
@@ -42,9 +49,11 @@ public class NPC : MonoBehaviour
     {
         if (this.gameObject.activeSelf)
         {
-            gameObject.GetComponentInChildren<Renderer>().material.color = Color.red;
+            GetComponent<SpriteRenderer>().sprite = madlook;
             happyText.gameObject.SetActive(false);
             madText.gameObject.SetActive(true);
+            madSound.Play();
+            chatter.Play();
             yield return new WaitForSeconds(5);
             madText.gameObject.SetActive(false);
         }
