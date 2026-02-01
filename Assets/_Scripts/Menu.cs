@@ -5,13 +5,24 @@ using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
 {
-    public void Playing()
+    public IEnumerator Playh()
     {
+        yield return new WaitForSeconds(1);
         SceneManager.LoadScene(1);
     }
-
-    public void Quitting()
+    public IEnumerator Quith()
     {
+        yield return new WaitForSeconds(1);
         Application.Quit();
     }
+    public void Playing()
+    {
+        StartCoroutine(Playh());
+    }
+    public void Quitting()
+    {
+        StartCoroutine(Quith());
+    }
+
+   
 }
