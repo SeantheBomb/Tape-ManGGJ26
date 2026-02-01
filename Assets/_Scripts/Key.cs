@@ -6,6 +6,7 @@ public class Key : MonoBehaviour
 {
     // Start is called before the first frame update
     public Lock pair;
+    public AudioSource locker;
 
     public void LockTo(Lock lockToMe)
     {
@@ -13,6 +14,7 @@ public class Key : MonoBehaviour
         { 
             gameObject.transform.position = lockToMe.lockPoint.position;
             gameObject.transform.rotation = lockToMe.gameObject.transform.rotation;
+            locker.Play();
             gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
         }
     }

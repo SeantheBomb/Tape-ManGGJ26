@@ -32,6 +32,7 @@ public class NPC : MonoBehaviour
     {
         if (this.gameObject.activeSelf)
         {
+            yield return new WaitForSeconds(2);
             GetComponent<SpriteRenderer>().sprite = happylook;
             madText.gameObject.SetActive(false);
             happyText.gameObject.SetActive(true);
