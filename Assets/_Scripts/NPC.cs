@@ -18,7 +18,7 @@ public class NPC : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GetComponent<SpriteRenderer>().sprite = madlook; 
+        GetComponentInChildren<SpriteRenderer>().sprite = madlook; 
         happyText.gameObject.SetActive(false);
         madText.gameObject.SetActive(false);
         textbox.gameObject.SetActive(false);
@@ -35,7 +35,7 @@ public class NPC : MonoBehaviour
         if (this.gameObject.activeSelf)
         {
             yield return new WaitForSeconds(2);
-            GetComponent<SpriteRenderer>().sprite = happylook;
+            GetComponentInChildren<SpriteRenderer>().sprite = happylook;
             madText.gameObject.SetActive(false);
             happyText.gameObject.SetActive(true);
             textbox.gameObject.SetActive(true);
@@ -54,7 +54,7 @@ public class NPC : MonoBehaviour
     {
         if (this.gameObject.activeSelf)
         {
-            GetComponent<SpriteRenderer>().sprite = madlook;
+            GetComponentInChildren<SpriteRenderer>().sprite = madlook;
             happyText.gameObject.SetActive(false);
             madText.gameObject.SetActive(true);
             textbox.gameObject.SetActive(true);
