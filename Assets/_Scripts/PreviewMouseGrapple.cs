@@ -11,6 +11,9 @@ public class PreviewMouseGrapple : MonoBehaviour
     public LineRenderer lineRenderer;
     public SpriteRenderer spriteRenderer;
 
+    public Color validGrapple = Color.cyan;
+    public Color invalidGrapple = Color.gray;
+
     public bool allGrappled => grapples.All((g) => g.isGrappled);
 
 
@@ -35,10 +38,15 @@ public class PreviewMouseGrapple : MonoBehaviour
                 Vector3 newEndPos = playerPos + (delta.normalized * player.maxGrappleLength);
                 Vector2 newRadialEndPos = RadialRigidibodyManager.instance.GetInverseRadialPosition(newEndPos);
                 realMousePos = RadialRigidibodyManager.instance.GetRadialPosition(newRadialEndPos);
+                spriteRenderer.color = invalidGrapple;
                 SetCanGrapple(false);
             }
-            else
+            else 
             {
+                if (MouseRaycastUtil.TryGetMouseColliderHit(out RaycastHit hit) && hit.collider.TryGetComponent(out GrappleHookTarget target))
+                    spriteRenderer.color = validGrapple;
+                else
+                    spriteRenderer.color = invalidGrapple;
                 SetCanGrapple(true);
             }
 
@@ -47,6 +55,11 @@ public class PreviewMouseGrapple : MonoBehaviour
             spriteRenderer.transform.LookAt(Camera.main.transform);
             lineRenderer.enabled = true;
             spriteRenderer.enabled = true;
+        }
+        else
+        {
+            lineRenderer.enabled = false;
+            spriteRenderer.enabled = false;
         }
     }
 
