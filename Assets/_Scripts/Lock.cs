@@ -5,31 +5,18 @@ using UnityEngine;
 public class Lock : MonoBehaviour 
 {
     public NPC saveme;
-    public Key pair;
-   // Start is called before the first frame update
-   void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+    void OnTriggerEnter(Collider collider)
     {
-        
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject  == pair.gameObject)
+        if (collider.TryGetComponent(out Key key))
         {
-            StartCoroutine(saveme.Happy());
-        }
-        else
-        {
-            if (collision.gameObject.tag == "Keys")
+            if (key.pair == this)
             {
-                StartCoroutine(saveme.Mad());
+                StartCoroutine(saveme.Happy());
+                key.LockTo(this);
             }
+            else
+                StartCoroutine(saveme.Mad());
         }
     }
 }
