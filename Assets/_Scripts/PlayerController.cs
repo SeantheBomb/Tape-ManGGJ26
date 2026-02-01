@@ -42,7 +42,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
         movement.x += Input.GetKey(moveRight) ? 1 : 0;
         movement.x -= Input.GetKey(moveLeft) ? 1 : 0;
 
@@ -67,7 +66,6 @@ public class PlayerController : MonoBehaviour
         if ((radialBody.isGrounded || isGrappled) && Input.GetKey(jump) == false)
             jumpTimer = 0;
         isJumpFirstFrame = false;
-
 
         if (movement.x != 0)
         {
