@@ -5,6 +5,7 @@ using UnityEngine;
 public class Lock : MonoBehaviour 
 {
     public NPC saveme;
+    public Transform lockPoint;
 
     void OnTriggerEnter(Collider collider)
     {

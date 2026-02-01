@@ -4,8 +4,16 @@ using UnityEngine;
 
 public class RadialRigidibodyManager : MonoBehaviour
 {
-
-    public static RadialRigidibodyManager instance;
+    static RadialRigidibodyManager _instance;
+    public static RadialRigidibodyManager instance
+    {
+        get 
+        {
+            if (_instance == null)
+                _instance = FindObjectOfType<RadialRigidibodyManager>();
+            return _instance;
+        }
+    }
 
     public float radius;
     public float height;
@@ -20,7 +28,7 @@ public class RadialRigidibodyManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        instance = this; 
+        _instance = this; 
     }
 
     public Vector3 GetRadialPosition(Vector2 pos)
@@ -79,6 +87,95 @@ public class RadialRigidibodyManager : MonoBehaviour
         result.x = Mathf.Atan2(pos.z, pos.x) * Mathf.Rad2Deg;
         return result;
     }
+
+    public bool TryGetRadialPositionFromScreen(
+        Vector2 screenPos,
+        out Vector2 radialPos,
+        Camera cam = null,
+        float maxDistance = 10000f,
+        bool requireWithinHeight = true)
+    {
+        cam ??= Camera.main;
+
+        radialPos = default;
+        if (!cam) return false;
+
+        Ray ray = cam.ScreenPointToRay(screenPos);
+
+        if (!TryIntersectRayWithCylinder(ray, radius, out Vector3 hitWorld, maxDistance, requireWithinHeight))
+            return false;
+
+        radialPos = GetInverseRadialPosition(hitWorld);
+
+        // Keep angle stable (optional): map to [0, 360)
+        radialPos.x = (radialPos.x % 360f + 360f) % 360f;
+
+        // Clamp y to cylinder bounds (optional, matches GetRadialPosition behavior)
+        radialPos.y = Mathf.Clamp(radialPos.y, minY, maxY);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Ray/cylinder intersection with an infinite vertical cylinder (center at transform.position, radius r),
+    /// then optionally rejects hits outside [minY, maxY].
+    /// </summary>
+    private bool TryIntersectRayWithCylinder(
+        Ray ray,
+        float r,
+        out Vector3 hit,
+        float maxDistance,
+        bool requireWithinHeight)
+    {
+        hit = default;
+
+        // Put the ray in cylinder-local coordinates (XZ plane around transform.position)
+        Vector3 o = ray.origin - transform.position;
+        Vector3 d = ray.direction;
+
+        // Cylinder equation in XZ: x^2 + z^2 = r^2
+        float A = d.x * d.x + d.z * d.z;
+
+        // If A is ~0, ray is parallel to cylinder axis (straight up/down), no side hit.
+        if (A < 1e-8f)
+            return false;
+
+        float B = 2f * (o.x * d.x + o.z * d.z);
+        float C = (o.x * o.x + o.z * o.z) - (r * r);
+
+        float disc = B * B - 4f * A * C;
+        if (disc < 0f)
+            return false;
+
+        float sqrtDisc = Mathf.Sqrt(disc);
+
+        // Two intersections; we want the closest positive t
+        float t0 = (-B - sqrtDisc) / (2f * A);
+        float t1 = (-B + sqrtDisc) / (2f * A);
+
+        float t = float.PositiveInfinity;
+
+        if (t0 > 0f) t = t0;
+        if (t1 > 0f && t1 < t) t = t1;
+
+        if (!float.IsFinite(t))
+            return false;
+
+        if (t > maxDistance)
+            return false;
+
+        Vector3 worldHit = ray.origin + ray.direction * t;
+
+        if (requireWithinHeight)
+        {
+            if (worldHit.y < minY || worldHit.y > maxY)
+                return false;
+        }
+
+        hit = worldHit;
+        return true;
+    }
+
 
 
     private void OnDrawGizmosSelected()

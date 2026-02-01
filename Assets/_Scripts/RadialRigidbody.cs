@@ -16,12 +16,13 @@ public class RadialRigidbody : MonoBehaviour
     public LayerMask collisionLayer;
     public LayerMask groundLayer;
 
-    Rigidbody body;
+    public Rigidbody body;
 
 
     private void Start()
     {
         body = GetComponent<Rigidbody>();
+        position = RadialRigidibodyManager.instance.GetInverseRadialPosition(body.position);
     }
 
     private void FixedUpdate()

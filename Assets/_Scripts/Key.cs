@@ -11,7 +11,7 @@ public class Key : MonoBehaviour
     {
         if(lockToMe == pair)
         { 
-            gameObject.transform.position = lockToMe.transform.position;
+            gameObject.transform.position = lockToMe.lockPoint.position;
             gameObject.transform.rotation = lockToMe.gameObject.transform.rotation;
             gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
         }

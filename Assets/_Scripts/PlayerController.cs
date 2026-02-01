@@ -17,14 +17,15 @@ public class PlayerController : MonoBehaviour
     bool isJumpFirstFrame = false;
     public float upSwingMultiplier = 0.5f;
     public float downSwingMultiplier = 0.5f;
+    public float maxGrappleLength = 20f;
 
     public KeyCode moveLeft = KeyCode.A;
     public KeyCode moveRight = KeyCode.D;
     public KeyCode jump = KeyCode.Space;
 
-    GrappleHookSource[] grapples;
+    public GrappleHookSource[] grapples;
 
-    RadialRigidbody radialBody;
+    public RadialRigidbody radialBody;
     float jumpTimer;
 
     bool isGrappled => grapples.Any((g) => g.isGrappled && g.target.isFixed);
