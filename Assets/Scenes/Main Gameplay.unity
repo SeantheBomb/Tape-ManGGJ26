@@ -394,6 +394,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1144878511331193627, guid: 4581ff06b10148d42b6c4b5cfbd66460,
         type: 3}
+      propertyPath: Loop
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1144878511331193627, guid: 4581ff06b10148d42b6c4b5cfbd66460,
+        type: 3}
+      propertyPath: m_Volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1144878511331193627, guid: 4581ff06b10148d42b6c4b5cfbd66460,
+        type: 3}
       propertyPath: m_audioClip
       value: 
       objectReference: {fileID: 8300000, guid: 18877c281dfa97c45af5bf7c5ad06635, type: 3}
@@ -411,6 +421,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_PlayOnAwake
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4945100689074410727, guid: 4581ff06b10148d42b6c4b5cfbd66460,
+        type: 3}
+      propertyPath: Loop
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4945100689074410727, guid: 4581ff06b10148d42b6c4b5cfbd66460,
+        type: 3}
+      propertyPath: m_Volume
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4945100689074410727, guid: 4581ff06b10148d42b6c4b5cfbd66460,
         type: 3}
@@ -436,6 +456,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Tension Tracker (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8231788219095161077, guid: 4581ff06b10148d42b6c4b5cfbd66460,
+        type: 3}
+      propertyPath: Loop
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8231788219095161077, guid: 4581ff06b10148d42b6c4b5cfbd66460,
+        type: 3}
+      propertyPath: m_Volume
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 8231788219095161077, guid: 4581ff06b10148d42b6c4b5cfbd66460,
         type: 3}
