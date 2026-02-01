@@ -15,6 +15,7 @@ public class RadialRigidbody : MonoBehaviour
     public bool isGrounded;
     public LayerMask collisionLayer;
     public LayerMask groundLayer;
+    public float fixDistance = 1f;
 
     public Rigidbody body;
 
@@ -23,6 +24,7 @@ public class RadialRigidbody : MonoBehaviour
     {
         body = GetComponent<Rigidbody>();
         position = RadialRigidibodyManager.instance.GetInverseRadialPosition(body.position);
+        body.MovePosition(RadialRigidibodyManager.instance.GetRadialPosition(position));
     }
 
     private void FixedUpdate()
@@ -30,7 +32,11 @@ public class RadialRigidbody : MonoBehaviour
 
         body.AddForce(gravity);
         position = RadialRigidibodyManager.instance.GetInverseRadialPosition(body.position);
-        body.MovePosition(RadialRigidibodyManager.instance.GetRadialPosition(position));
+        Vector3 expectedPos = RadialRigidibodyManager.instance.GetRadialPosition(position);
+        if(Vector3.Distance(expectedPos, body.position) > fixDistance)
+        {
+            body.MovePosition(expectedPos);
+        }
         velocity = RadialRigidibodyManager.instance.GetInverseRadialVector(body.position, body.velocity);
         body.velocity = RadialRigidibodyManager.instance.GetRadialVector(position, velocity);
         
