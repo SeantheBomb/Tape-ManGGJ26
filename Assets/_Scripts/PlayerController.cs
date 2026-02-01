@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     public float upSwingMultiplier = 0.5f;
     public float downSwingMultiplier = 0.5f;
     public float maxGrappleLength = 20f;
+    public float downForceMultiplier = 0.25f;
 
     public KeyCode moveLeft = KeyCode.A;
     public KeyCode moveRight = KeyCode.D;
@@ -61,7 +62,7 @@ public class PlayerController : MonoBehaviour
             jumpTimer += Time.deltaTime;
         }
         if(radialBody.isGrounded == false && isJumping == false && Input.GetKey(jump) == false && isGrappled == false)
-            movement.y = -jumpImpulse / 2f;
+            movement.y = -jumpImpulse * downForceMultiplier;
 
         if ((radialBody.isGrounded || isGrappled) && Input.GetKey(jump) == false)
             jumpTimer = 0;
