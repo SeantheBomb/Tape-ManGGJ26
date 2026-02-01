@@ -12,7 +12,7 @@ public class NPC : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        gameObject.GetComponent<Renderer>().material.color = Color.grey;
+        gameObject.GetComponentInChildren<Renderer>().material.color = Color.grey;
         happyText.gameObject.SetActive(false);
         madText.gameObject.SetActive(false);
     }
@@ -27,7 +27,7 @@ public class NPC : MonoBehaviour
     {
         if (this.gameObject.activeSelf)
         {
-            gameObject.GetComponent<Renderer>().material.color = Color.green;
+            gameObject.GetComponentInChildren<Renderer>().material.color = Color.green;
             madText.gameObject.SetActive(false);
             happyText.gameObject.SetActive(true);
             yield return new WaitForSeconds(5);
@@ -42,7 +42,7 @@ public class NPC : MonoBehaviour
     {
         if (this.gameObject.activeSelf)
         {
-            gameObject.GetComponent<Renderer>().material.color = Color.red;
+            gameObject.GetComponentInChildren<Renderer>().material.color = Color.red;
             happyText.gameObject.SetActive(false);
             madText.gameObject.SetActive(true);
             yield return new WaitForSeconds(5);

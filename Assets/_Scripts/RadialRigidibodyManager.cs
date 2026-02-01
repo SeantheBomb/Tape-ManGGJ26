@@ -4,8 +4,16 @@ using UnityEngine;
 
 public class RadialRigidibodyManager : MonoBehaviour
 {
-
-    public static RadialRigidibodyManager instance;
+    static RadialRigidibodyManager _instance;
+    public static RadialRigidibodyManager instance
+    {
+        get 
+        {
+            if (_instance == null)
+                _instance = FindObjectOfType<RadialRigidibodyManager>();
+            return _instance;
+        }
+    }
 
     public float radius;
     public float height;
@@ -20,7 +28,7 @@ public class RadialRigidibodyManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        instance = this; 
+        _instance = this; 
     }
 
     public Vector3 GetRadialPosition(Vector2 pos)

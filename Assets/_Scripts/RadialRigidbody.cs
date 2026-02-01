@@ -22,6 +22,7 @@ public class RadialRigidbody : MonoBehaviour
     private void Start()
     {
         body = GetComponent<Rigidbody>();
+        position = RadialRigidibodyManager.instance.GetInverseRadialPosition(body.position);
     }
 
     private void FixedUpdate()
