@@ -14,7 +14,7 @@ public class GrappleHookSource : MonoBehaviour
 
     Vector3 localHitpoint;
     float length;
-    [SerializeField] bool isDownswing, isUpswing;
+    public bool isDownswing, isUpswing;
 
     public bool isGrappled => target != null;
 
@@ -44,6 +44,8 @@ public class GrappleHookSource : MonoBehaviour
         if (target == null)
         {
             if(grappleLine)grappleLine.enabled = false;
+            isDownswing = false;
+            isUpswing = false;
             return;
         }
 
@@ -69,16 +71,16 @@ public class GrappleHookSource : MonoBehaviour
             isDownswing = ropeIsSwinging && verticalSpeed < -0.1f;
             isUpswing = ropeIsSwinging && verticalSpeed > 0.1f;
 
-            if (isDownswing)
-            {
-                // Increase downward acceleration (tweak multiplier)
-                radialBody.AddForce(Vector3.down * gravity * 0.5f);
-            }
-            else if (isUpswing)
-            {
-                // Decrease downward acceleration by pushing upward a bit
-                radialBody.AddForce(Vector3.up * gravity * 0.5f);
-            }
+            //if (isDownswing)
+            //{
+            //    // Increase downward acceleration (tweak multiplier)
+            //    radialBody.AddForce(Vector3.down * gravity * 0.5f);
+            //}
+            //else if (isUpswing)
+            //{
+            //    // Decrease downward acceleration by pushing upward a bit
+            //    radialBody.AddForce(Vector3.up * gravity * 0.5f);
+            //}
             radialBody.ConstrainRope(radialGrapplePoint, length);
         }
         else

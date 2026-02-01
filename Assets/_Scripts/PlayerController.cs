@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour
     public float maxJumpDuration = 1f;
     public bool isJumping = false;
     bool isJumpFirstFrame = false;
+    public float upSwingMultiplier = 0.5f;
+    public float downSwingMultiplier = 0.5f;
 
     public KeyCode moveLeft = KeyCode.A;
     public KeyCode moveRight = KeyCode.D;
@@ -25,7 +27,7 @@ public class PlayerController : MonoBehaviour
     RadialRigidbody radialBody;
     float jumpTimer;
 
-    bool isGrappled => grapples.Any((g) => g.isGrappled);
+    bool isGrappled => grapples.Any((g) => g.isGrappled && g.target.isFixed);
 
     float jumpImpulse => Mathf.Sqrt(2f * radialBody.gravity.magnitude * jumpHeight);
 
@@ -78,6 +80,20 @@ public class PlayerController : MonoBehaviour
     {
         radialBody.AddImpulse(movement);
         movement = Vector2.zero;
+        float gravity = radialBody.gravity.magnitude;
+
+        bool isDownswing = grapples.Any((g)=>g.isDownswing);
+        bool isUpswing = grapples.Any((g)=>g.isUpswing);
+        if (isDownswing && !isUpswing)
+        {
+            // Increase downward acceleration (tweak multiplier)
+            radialBody.AddForce(Vector3.down * gravity * downSwingMultiplier);
+        }
+        if (isUpswing && !isDownswing)
+        {
+            // Decrease downward acceleration by pushing upward a bit
+            radialBody.AddForce(Vector3.up * gravity * upSwingMultiplier);
+        }
     }
 
     private void BreakFixedGrapples()
