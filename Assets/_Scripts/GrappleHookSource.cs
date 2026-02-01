@@ -10,7 +10,9 @@ public class GrappleHookSource : MonoBehaviour
     public GrappleHookTarget target;
     public KeyCode grappleKey;
     public LineRenderer grappleLine;
+    //public float maxLength = 10f;
     public float minLength = 1f;
+    public bool canGrapple = true;
 
     Vector3 localHitpoint;
     float length;
@@ -18,6 +20,12 @@ public class GrappleHookSource : MonoBehaviour
 
     public bool isGrappled => target != null;
 
+    //private void Start()
+    //{
+    //    PlayerController parent = GetComponentInParent<PlayerController>();
+    //    if (parent != null)
+    //        maxLength = parent.maxGrappleLength;
+    //}
 
     private void Update()
     {
@@ -29,12 +37,18 @@ public class GrappleHookSource : MonoBehaviour
             }
             else if (MouseRaycastUtil.TryGetMouseColliderHit(out RaycastHit hit) && hit.collider.TryGetComponent(out GrappleHookTarget target))
             {
-                this.target = target;
+                if (canGrapple == false)
+                    return;
                 localHitpoint = target.transform.InverseTransformPoint(hit.point);
                 
                 length = Vector2.Distance(radialBody.position, RadialRigidibodyManager.instance.GetInverseRadialPosition(hit.point));
                 if(length < minLength) 
                     length = minLength;
+
+                //if (length > maxLength)
+                //    return;
+                this.target = target;
+
             }
         }
     }
