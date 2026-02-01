@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(RadialRigidbody))]
@@ -20,8 +20,12 @@ public class PlayerController : MonoBehaviour
     public KeyCode moveRight = KeyCode.D;
     public KeyCode jump = KeyCode.Space;
 
+    GrappleHookSource[] grapples;
+
     RadialRigidbody radialBody;
     float jumpTimer;
+
+    bool isGrappled => grapples.Any((g) => g.isGrappled);
 
     float jumpImpulse => Mathf.Sqrt(2f * radialBody.gravity.magnitude * jumpHeight);
 
@@ -29,6 +33,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         radialBody = GetComponent<RadialRigidbody>();
+        grapples = GetComponentsInChildren<GrappleHookSource>();
     }
 
     // Update is called once per frame
@@ -46,16 +51,17 @@ public class PlayerController : MonoBehaviour
         if(isJumping && isJumpFirstFrame)
         {
             movement.y = jumpImpulse;
+            BreakFixedGrapples();
             //Debug.Log($"Player: Jump impulse {jumpImpulse} set movement {movement.y}");
         }
         if (isJumping)
         {
             jumpTimer += Time.deltaTime;
         }
-        if(radialBody.isGrounded == false && isJumping == false && Input.GetKey(jump) == false)
+        if(radialBody.isGrounded == false && isJumping == false && Input.GetKey(jump) == false && isGrappled == false)
             movement.y = -jumpImpulse / 2f;
 
-        if (radialBody.isGrounded && Input.GetKey(jump) == false)
+        if ((radialBody.isGrounded || isGrappled) && Input.GetKey(jump) == false)
             jumpTimer = 0;
         isJumpFirstFrame = false;
 
@@ -72,5 +78,14 @@ public class PlayerController : MonoBehaviour
     {
         radialBody.AddImpulse(movement);
         movement = Vector2.zero;
+    }
+
+    private void BreakFixedGrapples()
+    {
+        foreach(var g in grapples)
+        {
+            if (g.isGrappled && g.target.isFixed)
+                g.StopGrapple();
+        }
     }
 }

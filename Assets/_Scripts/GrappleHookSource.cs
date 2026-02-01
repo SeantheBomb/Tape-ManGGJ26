@@ -14,6 +14,9 @@ public class GrappleHookSource : MonoBehaviour
 
     Vector3 localHitpoint;
     float length;
+    [SerializeField] bool isDownswing, isUpswing;
+
+    public bool isGrappled => target != null;
 
 
     private void Update()
@@ -22,7 +25,7 @@ public class GrappleHookSource : MonoBehaviour
         {
             if (target != null)
             {
-                target = null;
+                StopGrapple();
             }
             else if (MouseRaycastUtil.TryGetMouseColliderHit(out RaycastHit hit) && hit.collider.TryGetComponent(out GrappleHookTarget target))
             {
@@ -49,9 +52,35 @@ public class GrappleHookSource : MonoBehaviour
         Vector2 delta = radialGrapplePoint - radialBody.position;
         float stretch = delta.magnitude - length;
         Vector2 direction = delta.normalized;
+        float gravity = radialBody.gravity.magnitude;
 
-        if(target.isFixed)
+        if (target.isFixed)
+        {
+            // How "vertical" the rope is (1 = straight down, 0 = perfectly horizontal)
+            float ropeDownDot = Vector3.Dot(direction, Vector3.down);
+            float ropeVerticality = Mathf.Abs(ropeDownDot);
+
+            // Vertical speed (positive = moving up, negative = moving down)
+            float verticalSpeed = Vector3.Dot(radialBody.velocity, Vector3.up);
+
+            // Only consider swing boost when rope isn't nearly vertical (tweak threshold)
+            bool ropeIsSwinging = ropeVerticality < 0.9f;
+
+            isDownswing = ropeIsSwinging && verticalSpeed < -0.1f;
+            isUpswing = ropeIsSwinging && verticalSpeed > 0.1f;
+
+            if (isDownswing)
+            {
+                // Increase downward acceleration (tweak multiplier)
+                radialBody.AddForce(Vector3.down * gravity * 0.5f);
+            }
+            else if (isUpswing)
+            {
+                // Decrease downward acceleration by pushing upward a bit
+                radialBody.AddForce(Vector3.up * gravity * 0.5f);
+            }
             radialBody.ConstrainRope(radialGrapplePoint, length);
+        }
         else
             target.radialBody.ConstrainRope(radialBody.position, length);
 
@@ -66,5 +95,10 @@ public class GrappleHookSource : MonoBehaviour
             grappleLine.enabled = true;
             grappleLine.SetPositions(new Vector3[] { transform.position, grapplePoint });
         }
+    }
+
+    public void StopGrapple()
+    {
+        target = null;
     }
 }
