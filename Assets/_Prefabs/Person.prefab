@@ -839,6 +839,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   happyText: {fileID: 2500503955647182174}
   madText: {fileID: 4806780362943379478}
+  textbox: {fileID: 7761575294678069222}
   happySound: {fileID: 1615653824839514637}
   madSound: {fileID: 467089053199851322}
   chatter: {fileID: 3157863262923167546}
